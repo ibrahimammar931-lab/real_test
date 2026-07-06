@@ -1,8 +1,16 @@
-from fastapi import APIRouter
-from services.task_service import get_tasks
+from flask import Blueprint, jsonify
+from services.task_service import TaskService
 
-router = APIRouter()
+tasks_blueprint = Blueprint('tasks', __name__)
 
-@router.get("/tasks")
-def list_tasks():
-    return get_tasks()
+tasks = {
+    'task1': {'status': 'completed'},
+    'task2': {'status': 'pending'},
+    'task3': {'status': 'completed'}
+}
+
+task_service = TaskService(tasks)
+
+tasks_blueprint.route('/tasks/statistics', methods=['GET'])(
+    lambda: jsonify(task_service.get_task_statistics())
+)
