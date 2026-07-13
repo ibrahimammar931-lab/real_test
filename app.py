@@ -7,4 +7,3 @@ app = FastAPI()
 app.include_router(task_router)
 
 students = load_students()
-print(students)
