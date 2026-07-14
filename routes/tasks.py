@@ -1,8 +1,15 @@
-from fastapi import APIRouter
-from services.task_service import get_tasks
+from flask import Blueprint, request
+from .services.task_service import TaskService
+from .services.email_service import EmailService
 
-router = APIRouter()
+routes = Blueprint('tasks', __name__)
 
-@router.get("/tasks")
-def list_tasks():
-    return get_tasks()
+task_service = TaskService(EmailService('smtp.example.com', 465, 'sender@example.com', 'password'))
+
+@routes.route('/tasks', methods=['POST'])
+def create_task():
+    task_title = request.json['title']
+    task_description = request.json['description']
+    recipient_email = request.json['recipient_email']
+    task_service.create_task(task_title, task_description, recipient_email)
+    return 'Task created successfully', 201
